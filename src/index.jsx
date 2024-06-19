@@ -1,3 +1,4 @@
+
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
@@ -11,14 +12,15 @@ import ReactDOM from 'react-dom';
 import { Route, Routes, Outlet } from 'react-router-dom';
 
 import Header from '@edx/frontend-component-header';
-import Footer from '@edx/frontend-component-footer';
+import Footer from '../frontend-component-footer/src/components/Footer';
 
 import configureStore from './data/configureStore';
 import AccountSettingsPage, { NotFoundPage } from './account-settings';
 import IdVerificationPage from './id-verification';
 import messages from './i18n';
-
+import './output.css';
 import './index.scss';
+import './main.css';
 import Head from './head/Head';
 import NotificationCourses from './notification-preferences/NotificationCourses';
 import NotificationPreferences from './notification-preferences/NotificationPreferences';
@@ -29,9 +31,9 @@ subscribe(APP_READY, () => {
       <Head />
       <Routes>
         <Route element={(
-          <div className="d-flex flex-column" style={{ minHeight: '100vh' }}>
+          <div className="d-flex flex-column  tw-bg-body" style={{ minHeight: '100vh' }}>
             <Header />
-            <main className="flex-grow-1" id="main">
+            <main id="main">
               <Outlet />
             </main>
             <Footer />

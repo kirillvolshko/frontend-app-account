@@ -3,7 +3,8 @@
     margin-bottom: 1.5rem;
   }
 
-  h6, .h6 {
+  h6,
+  .h6 {
     margin-bottom: .25rem;
   }
 
@@ -24,11 +25,19 @@
       margin-bottom: .5rem;
 
       a {
-        text-decoration: underline;
+        text-decoration: none;
+        color: black;
       }
     }
   }
 
+  .font-weight-bold {
+    li {
+      font-weight: bold;
+      text-decoration: underline;
+
+    }
+  }
 
   .custom-switch {
     padding: 0;
@@ -39,8 +48,11 @@
       line-height: 1.6rem;
     }
   }
-  .grayed-out{
-    opacity: 0.6; /* Real browsers */
-    filter: alpha(opacity = 60); /* MSIE */
+
+  .grayed-out {
+    opacity: 0.6;
+    /* Real browsers */
+    filter: alpha(opacity=60);
+    /* MSIE */
   }
 }

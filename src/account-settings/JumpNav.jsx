@@ -20,7 +20,7 @@ const JumpNav = ({
   const showPreferences = useSelector(selectShowPreferences());
 
   return (
-    <div className={classNames('jump-nav px-2.25', { 'jump-nav-sm position-sticky pt-3': stickToTop })}>
+    <div className={classNames('jump-nav', { 'jump-nav-sm position-sticky pt-3': stickToTop })}>
       <Scrollspy
         items={[
           'basic-information',
@@ -32,48 +32,45 @@ const JumpNav = ({
           'delete-account',
         ]}
         className="list-unstyled"
-        currentClassName="font-weight-bold"
+        currentClassName="button-primary button-lg tw-text-white"
       >
         <li>
-          <NavHashLink to="#basic-information">
+          <NavHashLink to="#basic-information" className="tw-pl-[24px]">
             {intl.formatMessage(messages['account.settings.section.account.information'])}
           </NavHashLink>
         </li>
         <li>
-          <NavHashLink to="#profile-information">
-            {intl.formatMessage(messages['account.settings.section.profile.information'])}
-          </NavHashLink>
         </li>
         {getConfig().ENABLE_DEMOGRAPHICS_COLLECTION && displayDemographicsLink
           && (
-          <li>
-            <NavHashLink to="#demographics-information">
-              {intl.formatMessage(messages['account.settings.section.demographics.information'])}
-            </NavHashLink>
-          </li>
+            <li>
+              <NavHashLink to="#demographics-information" className="tw-pl-[24px]">
+                {intl.formatMessage(messages['account.settings.section.demographics.information'])}
+              </NavHashLink>
+            </li>
           )}
         <li>
-          <NavHashLink to="#social-media">
+          <NavHashLink to="#social-media" className="tw-pl-[24px]">
             {intl.formatMessage(messages['account.settings.section.social.media'])}
           </NavHashLink>
         </li>
         <li>
-          <NavHashLink to="#site-preferences">
+          <NavHashLink to="#site-preferences" className="tw-pl-[24px]">
             {intl.formatMessage(messages['account.settings.section.site.preferences'])}
           </NavHashLink>
         </li>
         <li>
-          <NavHashLink to="#linked-accounts">
+          <NavHashLink to="#linked-accounts" className="tw-pl-[24px]">
             {intl.formatMessage(messages['account.settings.section.linked.accounts'])}
           </NavHashLink>
         </li>
         {getConfig().ENABLE_ACCOUNT_DELETION
           && (
-          <li>
-            <NavHashLink to="#delete-account">
-              {intl.formatMessage(messages['account.settings.jump.nav.delete.account'])}
-            </NavHashLink>
-          </li>
+            <li>
+              <NavHashLink to="#delete-account" className="tw-pl-[24px]">
+                {intl.formatMessage(messages['account.settings.jump.nav.delete.account'])}
+              </NavHashLink>
+            </li>
           )}
       </Scrollspy>
       {showPreferences && (

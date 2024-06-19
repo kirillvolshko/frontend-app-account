@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import SwitchContent from './SwitchContent';
 import messages from './AccountSettingsPage.messages';
-
+import polygon from './assets/polygon2.svg'
 import {
   openForm,
   closeForm,
@@ -35,7 +35,7 @@ const EditableSelectField = (props) => {
     onEdit,
     onCancel,
     onSubmit,
-    onChange,
+    onChange: handleChange,
     isEditing,
     isEditable,
     isGrayedOut,
@@ -43,14 +43,17 @@ const EditableSelectField = (props) => {
     ...others
   } = props;
   const id = `field-${name}`;
+  const [currentValue, setCurrentValue] = useState(value);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(name, new FormData(e.target).get(name));
+  const handleSubmit = (newValue) => {
+    onSubmit(name, newValue);
   };
 
-  const handleChange = (e) => {
-    onChange(name, e.target.value);
+  const handleInputChange = (e) => {
+    const newValue = e.target.value;
+    setCurrentValue(newValue);
+    handleChange(name, newValue);
+    handleSubmit(newValue); // Automatically submit the form on change
   };
 
   const handleEdit = () => {
@@ -75,8 +78,6 @@ const EditableSelectField = (props) => {
     let finalValue = rawValue;
 
     if (options) {
-      // Use == instead of === to prevent issues when HTML casts numbers as strings
-      // eslint-disable-next-line eqeqeq
       const selectedOption = options.find(option => option.value == rawValue);
       if (selectedOption) {
         finalValue = selectedOption.label;
@@ -98,15 +99,16 @@ const EditableSelectField = (props) => {
       value: confirmationValue,
     });
   };
+
   const selectOptions = options.map((option) => {
     if (option.group) {
-      // If the option has a 'group' property, it represents an element with sub-options.
       return (
         <optgroup label={option.label} key={option.label}>
           {option.group.map((subOption) => (
             <option
               value={subOption.value}
               key={`${subOption.value}-${subOption.label}`}
+
             >
               {subOption.label}
             </option>
@@ -115,7 +117,7 @@ const EditableSelectField = (props) => {
       );
     }
     return (
-      <option value={option.value} key={`${option.value}-${option.label}`}>
+      <option value={option.value} key={`${option.value}-${option.label}`} >
         {option.label}
       </option>
     );
@@ -125,75 +127,33 @@ const EditableSelectField = (props) => {
     <SwitchContent
       expression={isEditing ? 'editing' : 'default'}
       cases={{
-        editing: (
+        default: (
           <>
-            <form onSubmit={handleSubmit}>
-              <Form.Group
-                controlId={id}
-                isInvalid={error != null}
-              >
-                <Form.Label size="sm" className="h6 d-block" htmlFor={id}>{label}</Form.Label>
+            <form>
+              <Form.Group controlId={id} isInvalid={error != null}>
+                <Form.Label className="h6 d-block" htmlFor={id}>{label}</Form.Label>
                 <Form.Control
                   data-hj-suppress
                   name={name}
                   id={id}
                   type={type}
                   as={type}
-                  value={value}
-                  onChange={handleChange}
+                  value={currentValue}
+                  onChange={handleInputChange}  // Use handleInputChange
+
                   {...others}
                 >
+
                   {options.length > 0 && selectOptions}
                 </Form.Control>
                 {!!helpText && <Form.Text>{helpText}</Form.Text>}
                 {error != null && <Form.Control.Feedback>{error}</Form.Control.Feedback>}
                 {others.children}
               </Form.Group>
-              <p>
-                <StatefulButton
-                  type="submit"
-                  className="mr-2"
-                  state={saveState}
-                  labels={{
-                    default: intl.formatMessage(messages['account.settings.editable.field.action.save']),
-                  }}
-                  onClick={(e) => {
-                    // Swallow clicks if the state is pending.
-                    // We do this instead of disabling the button to prevent
-                    // it from losing focus (disabled elements cannot have focus).
-                    // Disabling it would causes upstream issues in focus management.
-                    // Swallowing the onSubmit event on the form would be better, but
-                    // we would have to add that logic for every field given our
-                    // current structure of the application.
-                    if (saveState === 'pending') { e.preventDefault(); }
-                  }}
-                  disabledStates={[]}
-                />
-                <Button
-                  variant="outline-primary"
-                  onClick={handleCancel}
-                >
-                  {intl.formatMessage(messages['account.settings.editable.field.action.cancel'])}
-                </Button>
-              </p>
             </form>
             {['name', 'verified_name'].includes(name) && <CertificatePreference fieldName={name} />}
           </>
-        ),
-        default: (
-          <div className="form-group">
-            <div className="d-flex align-items-start">
-              <h6 aria-level="3">{label}</h6>
-              {isEditable ? (
-                <Button variant="link" onClick={handleEdit} className="ml-3">
-                  <FontAwesomeIcon className="mr-1" icon={faPencilAlt} />{intl.formatMessage(messages['account.settings.editable.field.action.edit'])}
-                </Button>
-              ) : null}
-            </div>
-            <p data-hj-suppress className={isGrayedOut ? 'grayed-out' : null}>{renderValue(value)}</p>
-            <p className="small text-muted mt-n2">{renderConfirmationMessage() || helpText}</p>
-          </div>
-        ),
+        )
       }}
     />
   );

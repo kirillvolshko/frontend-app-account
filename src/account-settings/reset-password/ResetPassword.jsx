@@ -20,7 +20,7 @@ const ResetPassword = (props) => {
           description="The password label in account settings"
         />
       </h6>
-      <p>
+      <p className='tw-text-black'>
         <StatefulButton
           variant="link"
           state={status}

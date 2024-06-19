@@ -83,7 +83,7 @@ const EditableField = (props) => {
 
   const renderConfirmationMessage = () => {
     if (!confirmationMessageDefinition || !confirmationValue) {
-      return null;
+      return 'Дані відстні';
     }
     return intl.formatMessage(confirmationMessageDefinition, {
       value: confirmationValue,
@@ -150,14 +150,14 @@ const EditableField = (props) => {
           <div className="form-group">
             <div className="d-flex align-items-start">
               <h6 aria-level="3">{label}</h6>
-              {isEditable ? (
-                <Button variant="link" onClick={handleEdit} className="ml-3">
-                  <FontAwesomeIcon className="mr-1" icon={faPencilAlt} />{intl.formatMessage(messages['account.settings.editable.field.action.edit'])}
-                </Button>
-              ) : null}
+
             </div>
-            <p data-hj-suppress className={classNames('text-truncate', { 'grayed-out': isGrayedOut })}>{renderValue(value)}</p>
-            <p className="small text-muted mt-n2">{renderConfirmationMessage() || helpText}</p>
+            {isEditable ? (
+              <Button variant="link" onClick={handleEdit} >
+                <p data-hj-suppress className={classNames('input-text', { 'grayed-out': isGrayedOut })}>+{renderValue(value)}</p>
+                <p className="small text-muted mt-n2">{renderConfirmationMessage() || helpText}</p>
+              </Button>
+            ) : null}
           </div>
         ),
       }}

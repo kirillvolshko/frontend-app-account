@@ -153,16 +153,15 @@ const EmailField = (props) => {
         ),
         default: (
           <div className="form-group">
-            <div className="d-flex align-items-start">
+            <div>
               <h6 aria-level="3">{label}</h6>
               {isEditable ? (
-                <Button variant="link" onClick={handleEdit} className="ml-3">
-                  <FontAwesomeIcon className="mr-1" icon={faPencilAlt} />
-                  {intl.formatMessage(messages['account.settings.editable.field.action.edit'])}
+                <Button variant="link" onClick={handleEdit} >
+                  <p className='input-text' data-hj-suppress>{renderValue()}</p>
                 </Button>
               ) : null}
             </div>
-            <p data-hj-suppress>{renderValue()}</p>
+
             {renderConfirmationMessage() || <p className="small text-muted mt-n2">{helpText}</p>}
           </div>
         ),

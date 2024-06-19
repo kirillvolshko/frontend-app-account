@@ -11,19 +11,26 @@ $fa-font-path: "~font-awesome/fonts";
 @import "./account-settings/style";
 @import "./id-verification/id-verification";
 
+body {
+  background-color: #110f12;
+}
 .word-break-all {
   word-break: break-all !important;
 }
 
 // TODO: Update edx-bootstrap theme to incorporate these edits.
-.btn, a.btn {
+.btn,
+a.btn {
   text-decoration: none;
+
   &:hover {
     text-decoration: none;
   }
 }
+
 .btn-link {
   text-decoration: underline;
+
   &:hover {
     text-decoration: underline;
   }
@@ -33,7 +40,8 @@ $fa-font-path: "~font-awesome/fonts";
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  & > main {
+
+  &>main {
     flex-grow: 1;
   }
 }
@@ -67,7 +75,7 @@ $fa-font-path: "~font-awesome/fonts";
   text-decoration: underline;
 }
 
-.pgn__hyperlink__external-icon{
+.pgn__hyperlink__external-icon {
   margin-left: 4px;
 }
 

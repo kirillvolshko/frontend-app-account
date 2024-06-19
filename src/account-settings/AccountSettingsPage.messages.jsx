@@ -71,6 +71,11 @@ const messages = defineMessages({
     defaultMessage: 'Username',
     description: 'Label for account settings username field.',
   },
+  'account.settings.field.phonenumber': {
+    id: 'account.settings.field.phonenumber',
+    defaultMessage: 'Phone Number',
+    description: 'Label for account settings phonenumber field.',
+  },
   'account.settings.field.username.help.text': {
     id: 'account.settings.field.username.help.text',
     defaultMessage: 'The name that identifies you on {siteName}. You cannot change your username.',

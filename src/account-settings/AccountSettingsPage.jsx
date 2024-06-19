@@ -51,7 +51,8 @@ import { fetchSiteLanguages } from './site-language';
 import DemographicsSection from './demographics/DemographicsSection';
 import { fetchCourseList } from '../notification-preferences/data/thunks';
 import { withLocation, withNavigate } from './hoc';
-
+import ProfileUser from './ProfileUser';
+import Distribution from './Distribution';
 class AccountSettingsPage extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -493,12 +494,13 @@ class AccountSettingsPage extends React.Component {
     );
     return (
       <>
-        { shouldUpdateDOB
+        {shouldUpdateDOB
           && (
-          <DOBModal
-            {...editableFieldProps}
-          />
+            <DOBModal
+              {...editableFieldProps}
+            />
           )}
+
         <div className="account-section pt-3 mb-5" id="basic-information" ref={this.navLinkRefs['#basic-information']}>
           {
             this.props.mostRecentVerifiedName
@@ -506,257 +508,90 @@ class AccountSettingsPage extends React.Component {
           }
           {localStorage.getItem('submittedDOB')
             && (
-            <OneTimeDismissibleAlert
-              id="updated-dob"
-              variant="success"
-              icon={CheckCircle}
-              header={this.props.intl.formatMessage(messages['account.settings.field.dob.form.success'])}
-              body=""
-            />
+              <OneTimeDismissibleAlert
+                id="updated-dob"
+                variant="success"
+                icon={CheckCircle}
+                header={this.props.intl.formatMessage(messages['account.settings.field.dob.form.success'])}
+                body=""
+              />
             )}
 
           <h2 className="section-heading h4 mb-3">
-            {this.props.intl.formatMessage(messages['account.settings.section.account.information'])}
+            {this.props.intl.formatMessage(messages['account.settings.section.profile.information'])}
           </h2>
           <p>{this.props.intl.formatMessage(messages['account.settings.section.account.information.description'])}</p>
           {this.renderManagedProfileMessage()}
 
           {this.renderNameChangeModal()}
+          <div>
+            <h3>Основна Інформація</h3>
+            <div className='borderStyles'>
+              <EmailField
+                name="email"
+                label={this.props.intl.formatMessage(messages['account.settings.field.email'])}
+                emptyLabel={
+                  this.isEditable('email')
+                    ? this.props.intl.formatMessage(messages['account.settings.field.email.empty'])
+                    : this.renderEmptyStaticFieldMessage()
+                }
+                value={this.props.formValues.email}
+                confirmationMessageDefinition={messages['account.settings.field.email.confirmation']}
+                helpText={this.props.intl.formatMessage(
+                  messages['account.settings.field.email.help.text'],
+                  { siteName: getConfig().SITE_NAME },
+                )}
+                isEditable={this.isEditable('email')}
+                {...editableFieldProps}
+              />
+              {this.renderSecondaryEmailField(editableFieldProps)}
 
-          <EditableField
-            name="username"
-            type="text"
-            value={this.props.formValues.username}
-            label={this.props.intl.formatMessage(messages['account.settings.field.username'])}
-            helpText={this.props.intl.formatMessage(
-              messages['account.settings.field.username.help.text'],
-              { siteName: getConfig().SITE_NAME },
-            )}
-            isEditable={false}
-            {...editableFieldProps}
-          />
-          <EditableField
-            name="name"
-            type="text"
-            value={
-              verifiedName?.status === 'submitted'
-              && this.props.formValues.pending_name_change
-                ? this.props.formValues.pending_name_change
-                : this.props.formValues.name
-              }
-            label={this.props.intl.formatMessage(messages['account.settings.field.full.name'])}
-            emptyLabel={
-              this.isEditable('name')
-                ? this.props.intl.formatMessage(messages['account.settings.field.full.name.empty'])
-                : this.renderEmptyStaticFieldMessage()
-            }
-            helpText={
-              verifiedName
-                ? this.renderFullNameHelpText(verifiedName.status, verifiedName.proctored_exam_attempt_id)
-                : this.props.intl.formatMessage(messages['account.settings.field.full.name.help.text'])
-            }
-            isEditable={
-              verifiedName
-                ? this.isEditable('verifiedName') && this.isEditable('name')
-                : this.isEditable('name')
-            }
-            isGrayedOut={
-              verifiedName && !this.isEditable('verifiedName')
-            }
-            onChange={this.handleEditableFieldChange}
-            onSubmit={this.handleSubmitProfileName}
-          />
-          {verifiedName
-            && (
-            <EditableField
-              name="verified_name"
-              type="text"
-              value={this.props.formValues.verified_name}
-              label={
-                (
-                  <div className="d-flex">
-                    {this.props.intl.formatMessage(messages['account.settings.field.name.verified'])}
-                    {
-                      this.renderVerifiedNameIcon(verifiedName.status)
-                    }
-                  </div>
-                )
-              }
-              helpText={this.renderVerifiedNameHelpText(verifiedName.status, verifiedName.proctored_exam_attempt_id)}
-              isEditable={this.isEditable('verifiedName')}
-              isGrayedOut={!this.isEditable('verifiedName')}
-              onChange={this.handleEditableFieldChange}
-              onSubmit={this.handleSubmitVerifiedName}
-            />
-            )}
+              <EditableField
+                name="phone_number"
+                type="tel"
+                value={this.props.formValues.phone_number}
+                label={this.props.intl.formatMessage(messages['account.settings.field.phonenumber'])}
+                emptyLabel={
+                  this.isEditable('phone_number')
+                    ? this.props.intl.formatMessage(messages['account.settings.field.phonenumber.empty'])
+                    : this.renderEmptyStaticFieldMessage()
+                }
+                {...editableFieldProps}
+              />
 
-          <EmailField
-            name="email"
-            label={this.props.intl.formatMessage(messages['account.settings.field.email'])}
-            emptyLabel={
-              this.isEditable('email')
-                ? this.props.intl.formatMessage(messages['account.settings.field.email.empty'])
-                : this.renderEmptyStaticFieldMessage()
-            }
-            value={this.props.formValues.email}
-            confirmationMessageDefinition={messages['account.settings.field.email.confirmation']}
-            helpText={this.props.intl.formatMessage(
-              messages['account.settings.field.email.help.text'],
-              { siteName: getConfig().SITE_NAME },
-            )}
-            isEditable={this.isEditable('email')}
-            {...editableFieldProps}
-          />
-          {this.renderSecondaryEmailField(editableFieldProps)}
-          <ResetPassword email={this.props.formValues.email} />
-          {(!getConfig().ENABLE_COPPA_COMPLIANCE)
-            && (
-            <EditableSelectField
-              name="year_of_birth"
-              type="select"
-              label={this.props.intl.formatMessage(messages['account.settings.field.dob'])}
-              emptyLabel={this.props.intl.formatMessage(messages['account.settings.field.dob.empty'])}
-              value={this.props.formValues.year_of_birth}
-              options={yearOfBirthOptions}
-              {...editableFieldProps}
-            />
-            )}
-          <EditableSelectField
-            name="country"
-            type="select"
-            value={this.props.formValues.country}
-            options={countryOptions}
-            label={this.props.intl.formatMessage(messages['account.settings.field.country'])}
-            emptyLabel={
-              this.isEditable('country')
-                ? this.props.intl.formatMessage(messages['account.settings.field.country.empty'])
-                : this.renderEmptyStaticFieldMessage()
-            }
-            isEditable={this.isEditable('country')}
-            {...editableFieldProps}
-          />
-          {showState
-            && (
-            <EditableSelectField
-              name="state"
-              type="select"
-              value={this.props.formValues.state}
-              options={stateOptions}
-              label={this.props.intl.formatMessage(messages['account.settings.field.state'])}
-              emptyLabel={
-                this.isEditable('state')
-                  ? this.props.intl.formatMessage(messages['account.settings.field.state.empty'])
-                  : this.renderEmptyStaticFieldMessage()
-              }
-              isEditable={this.isEditable('state')}
-              {...editableFieldProps}
-            />
-            )}
-        </div>
+              <ResetPassword email={this.props.formValues.email} />
 
-        <div className="account-section pt-3 mb-5" id="profile-information" ref={this.navLinkRefs['#profile-information']}>
-          <h2 className="section-heading h4 mb-3">
-            {this.props.intl.formatMessage(messages['account.settings.section.profile.information'])}
-          </h2>
+              <BetaLanguageBanner />
+              <EditableSelectField
+                name="siteLanguage"
+                type="select"
+                options={this.props.siteLanguageOptions}
+                value={this.props.siteLanguage.draft !== undefined ? this.props.siteLanguage.draft : this.context.locale}
+                label={this.props.intl.formatMessage(messages['account.settings.field.site.language'])}
+                helpText={this.props.intl.formatMessage(messages['account.settings.field.site.language.help.text'])}
+                {...editableFieldProps}
+              />
 
-          <EditableSelectField
-            name="level_of_education"
-            type="select"
-            value={this.props.formValues.level_of_education}
-            options={getConfig().ENABLE_COPPA_COMPLIANCE
-              ? educationLevelOptions.filter(option => option.value !== 'el')
-              : educationLevelOptions}
-            label={this.props.intl.formatMessage(messages['account.settings.field.education'])}
-            emptyLabel={this.props.intl.formatMessage(messages['account.settings.field.education.empty'])}
-            {...editableFieldProps}
-          />
-          <EditableSelectField
-            name="gender"
-            type="select"
-            value={this.props.formValues.gender}
-            options={genderOptions}
-            label={this.props.intl.formatMessage(messages['account.settings.field.gender'])}
-            emptyLabel={this.props.intl.formatMessage(messages['account.settings.field.gender.empty'])}
-            {...editableFieldProps}
-          />
-          <EditableSelectField
-            name="language_proficiencies"
-            type="select"
-            value={this.props.formValues.language_proficiencies}
-            options={languageProficiencyOptions}
-            label={this.props.intl.formatMessage(messages['account.settings.field.language.proficiencies'])}
-            emptyLabel={this.props.intl.formatMessage(messages['account.settings.field.language.proficiencies.empty'])}
-            {...editableFieldProps}
-          />
+              <EditableSelectField
+                name="time_zone"
+                type="select"
+                value={this.props.formValues.time_zone}
+                options={timeZoneOptions}
+                label={this.props.intl.formatMessage(messages['account.settings.field.time.zone'])}
+                emptyLabel={this.props.intl.formatMessage(messages['account.settings.field.time.zone.empty'])}
+                helpText={this.props.intl.formatMessage(messages['account.settings.field.time.zone.description'])}
+                {...editableFieldProps}
+                onSubmit={(formId, value) => {
+                  // the endpoint will not accept an empty string. it must be null
+                  this.handleSubmit(formId, value || null);
+                }}
+              />
+            </div>
+          </div>
         </div>
         {getConfig().ENABLE_DEMOGRAPHICS_COLLECTION && this.renderDemographicsSection()}
-        <div className="account-section pt-3 mb-5" id="social-media">
-          <h2 className="section-heading h4 mb-3">
-            {this.props.intl.formatMessage(messages['account.settings.section.social.media'])}
-          </h2>
-          <p>
-            {this.props.intl.formatMessage(
-              messages['account.settings.section.social.media.description'],
-              { siteName: getConfig().SITE_NAME },
-            )}
-          </p>
 
-          <EditableField
-            name="social_link_linkedin"
-            type="text"
-            value={this.props.formValues.social_link_linkedin}
-            label={this.props.intl.formatMessage(messages['account.settings.field.social.platform.name.linkedin'])}
-            emptyLabel={this.props.intl.formatMessage(messages['account.settings.field.social.platform.name.linkedin.empty'])}
-            {...editableFieldProps}
-          />
-          <EditableField
-            name="social_link_facebook"
-            type="text"
-            value={this.props.formValues.social_link_facebook}
-            label={this.props.intl.formatMessage(messages['account.settings.field.social.platform.name.facebook'])}
-            emptyLabel={this.props.intl.formatMessage(messages['account.settings.field.social.platform.name.facebook.empty'])}
-            {...editableFieldProps}
-          />
-          <EditableField
-            name="social_link_twitter"
-            type="text"
-            value={this.props.formValues.social_link_twitter}
-            label={this.props.intl.formatMessage(messages['account.settings.field.social.platform.name.twitter'])}
-            emptyLabel={this.props.intl.formatMessage(messages['account.settings.field.social.platform.name.twitter.empty'])}
-            {...editableFieldProps}
-          />
-        </div>
 
-        <div className="account-section pt-3 mb-5" id="site-preferences" ref={this.navLinkRefs['#site-preferences']}>
-          <h2 className="section-heading h4 mb-3">
-            {this.props.intl.formatMessage(messages['account.settings.section.site.preferences'])}
-          </h2>
-
-          <BetaLanguageBanner />
-          <EditableSelectField
-            name="siteLanguage"
-            type="select"
-            options={this.props.siteLanguageOptions}
-            value={this.props.siteLanguage.draft !== undefined ? this.props.siteLanguage.draft : this.context.locale}
-            label={this.props.intl.formatMessage(messages['account.settings.field.site.language'])}
-            helpText={this.props.intl.formatMessage(messages['account.settings.field.site.language.help.text'])}
-            {...editableFieldProps}
-          />
-          <EditableSelectField
-            name="time_zone"
-            type="select"
-            value={this.props.formValues.time_zone}
-            options={timeZoneOptions}
-            label={this.props.intl.formatMessage(messages['account.settings.field.time.zone'])}
-            emptyLabel={this.props.intl.formatMessage(messages['account.settings.field.time.zone.empty'])}
-            helpText={this.props.intl.formatMessage(messages['account.settings.field.time.zone.description'])}
-            {...editableFieldProps}
-            onSubmit={(formId, value) => {
-              // the endpoint will not accept an empty string. it must be null
-              this.handleSubmit(formId, value || null);
-            }}
-          />
-        </div>
 
         <div className="account-section pt-3 mb-5" id="linked-accounts" ref={this.navLinkRefs['#linked-accounts']}>
           <h2 className="section-heading h4 mb-3">{this.props.intl.formatMessage(messages['account.settings.section.linked.accounts'])}</h2>
@@ -766,17 +601,24 @@ class AccountSettingsPage extends React.Component {
               { siteName: getConfig().SITE_NAME },
             )}
           </p>
-          <ThirdPartyAuth />
-        </div>
+          <ThirdPartyAuth
 
+          />
+        </div>
+        <div className="account-section pt-3 mb-5" id="social-media">
+          <h2 className="section-heading h4 mb-3">
+            {this.props.intl.formatMessage(messages['account.settings.section.social.media'])}
+          </h2>
+          <Distribution />
+        </div>
         {getConfig().ENABLE_ACCOUNT_DELETION
           && (
-          <div className="account-section pt-3 mb-5" id="delete-account" ref={this.navLinkRefs['#delete-account']}>
-            <DeleteAccount
-              isVerifiedAccount={this.props.isActive}
-              hasLinkedTPA={hasLinkedTPA}
-            />
-          </div>
+            <div className="account-section pt-3 mb-5" id="delete-account" ref={this.navLinkRefs['#delete-account']}>
+              <DeleteAccount
+                isVerifiedAccount={this.props.isActive}
+                hasLinkedTPA={hasLinkedTPA}
+              />
+            </div>
           )}
 
       </>
@@ -809,17 +651,18 @@ class AccountSettingsPage extends React.Component {
     return (
       <div className="page__account-settings container-fluid py-5">
         {this.renderDuplicateTpaProviderMessage()}
-        <h1 className="mb-4">
-          {this.props.intl.formatMessage(messages['account.settings.page.heading'])}
-        </h1>
         <div>
-          <div className="row">
-            <div className="col-md-2">
+
+          <div className=" tw-grid tw-grid-cols-3 tw-gap-6">
+            <div className="tw-col-span-1 tw-bg-white tw-px-[32px] tw-pt-[40px] tw-w-min">
+              <ProfileUser
+                value={this.props.formValues.username}
+              />
               <JumpNav
                 displayDemographicsLink={this.props.formValues.shouldDisplayDemographicsSection}
               />
             </div>
-            <div className="col-md-10">
+            <div className=" tw-container tw-col-span-2">
               {loading ? this.renderLoading() : null}
               {loaded ? this.renderContent() : null}
               {loadingError ? this.renderError() : null}
@@ -844,6 +687,7 @@ AccountSettingsPage.propTypes = {
     username: PropTypes.string,
     name: PropTypes.string,
     email: PropTypes.string,
+
     secondary_email: PropTypes.string,
     secondary_email_enabled: PropTypes.bool,
     year_of_birth: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

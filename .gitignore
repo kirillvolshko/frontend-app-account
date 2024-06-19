@@ -2,6 +2,7 @@
 .eslintcache
 .idea
 node_modules
+frontend-component-footer
 npm-debug.log
 coverage
 
